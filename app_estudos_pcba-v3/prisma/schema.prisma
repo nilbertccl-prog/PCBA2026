@@ -1,0 +1,35 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  password      String
+  isFirstAccess Boolean   @default(true)
+  daysPerWeek   Int       @default(5)
+  hoursPerDay   Float     @default(2.0)
+  studyPlanJson String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  results       SimuladoResult[]
+}
+
+model SimuladoResult {
+  id           String   @id @default(cuid())
+  userId       String
+  simuladoId   Int
+  score        Float
+  totalCorrect Int
+  totalQuestions Int
+  timeSpentSec Int
+  answersJson  String
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
